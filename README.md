@@ -24,3 +24,18 @@ docker run \
   -e GEOIP_STATE=on \
   geoip-shell
 ```
+## Setup
+
+1. Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+2. Edit `.env` to match your needs.
+
+3. Start the container:
+
+```bash
+docker compose up -d --build
+```

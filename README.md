@@ -1,41 +1,60 @@
-# geoip-shell-container
-Containerized version of friendly-bits/geoip-shell
+# geoip-shell-docker
 
-## Environment Variables
+Containerized version of geoip-shell.
 
-| Variable    | Description                   | Example         |
-| ----------- | ----------------------------- | --------------- |
-| MODE        | whitelist or blacklist        | whitelist       |
-| COUNTRIES   | Comma-separated country codes | NZ,AU           |
-| PORT_RULES  | Protocol/port rules           | tcp:block:22,80 |
-| GEOIP_STATE | Enable or disable rules       | on / off        |
-| IP_SOURCE   | IP list provider              | ipdeny          |
+## ⚠️ Warning
 
-### Example
+This container modifies the host firewall and requires:
 
-```bash
-docker run \
-  --network host \
-  --cap-add NET_ADMIN \
-  --privileged \
-  -e MODE=blacklist \
-  -e COUNTRIES=CN,RU \
-  -e PORT_RULES="tcp:block:22,80" \
-  -e GEOIP_STATE=on \
-  geoip-shell
-```
+* `--privileged`
+* `host network`
+* NET_ADMIN capability
+
 ## Setup
-
-1. Copy the example environment file:
 
 ```bash
 cp .env.example .env
+docker compose up -d --build
 ```
 
-2. Edit `.env` to match your needs.
+## Environment Variables
 
-3. Start the container:
+| Variable    | Description           |
+| ----------- | --------------------- |
+| MODE        | whitelist / blacklist |
+| COUNTRIES   | Country codes         |
+| DIRECTION   | inbound / outbound    |
+| PORT_RULES  | Port/protocol rules   |
+| GEOIP_STATE | on / off              |
+| IP_SOURCE   | IP list provider      |
+| SCHEDULE    | Cron schedule         |
+| TZ          | Timezone              |
+| RESET       | Reset config on start |
+| LOG_FILE    | Optional log file     |
+
+## CLI Usage
+
+You can run commands directly:
 
 ```bash
-docker compose up -d --build
+docker run --rm --network host --privileged geoip-shell geoip-shell status
+```
+
+Examples:
+
+```bash
+docker run --rm --network host --privileged geoip-shell geoip-shell update
+docker run --rm --network host --privileged geoip-shell geoip-shell restore
+```
+
+## Logs
+
+```bash
+docker logs -f geoip-shell
+```
+
+Optional file logs:
+
+```bash
+./logs/geoip-shell.log
 ```

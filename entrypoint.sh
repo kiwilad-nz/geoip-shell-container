@@ -27,9 +27,9 @@ geoip-shell uninstall || true
 CONFIG_CMD="geoip-shell configure -m \"$MODE\" -c \"$COUNTRIES\""
 
 # Add port rules if provided
-if [ -n "$PORT_RULES" ]; then
-    CONFIG_CMD="$CONFIG_CMD -p $PORT_RULES"
-fi
+for rule in $PORT_RULES; do
+    geoip-shell configure -p "$rule"
+done
 
 # Add IP source if provided
 if [ -n "$IP_SOURCE" ]; then

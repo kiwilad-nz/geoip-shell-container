@@ -18,6 +18,7 @@ SCHEDULE="${SCHEDULE:-}"
 TZ="${TZ:-UTC}"
 RESET="${RESET:-false}"
 LOG_FILE="${LOG_FILE:-}"
+FIREWALL_BACKEND="${FIREWALL_BACKEND:-}"
 
 echo "Starting geoip-shell..."
 
@@ -45,6 +46,7 @@ echo "State: $GEOIP_STATE"
 echo "IP source: $IP_SOURCE"
 echo "Schedule: $SCHEDULE"
 echo "Reset: $RESET"
+echo "Firewall backend: $FIREWALL_BACKEND"
 
 # Ensure installed
 if ! command -v geoip-shell >/dev/null 2>&1; then
@@ -63,6 +65,20 @@ CONFIG_CMD="geoip-shell configure -D $DIRECTION -m \"$MODE\" -c \"$COUNTRIES\""
 
 [ -n "$IP_SOURCE" ] && CONFIG_CMD="$CONFIG_CMD -u $IP_SOURCE"
 [ -n "$SCHEDULE" ] && CONFIG_CMD="$CONFIG_CMD -s \"$SCHEDULE\""
+
+# Firewall backend override (IMPORTANT ADDITION)
+if [ -n "$FIREWALL_BACKEND" ]; then
+    case "$FIREWALL_BACKEND" in
+        nft|ipt)
+            echo "Using firewall backend: $FIREWALL_BACKEND"
+            CONFIG_CMD="$CONFIG_CMD -w $FIREWALL_BACKEND"
+            ;;
+        *)
+            echo "Invalid FIREWALL_BACKEND: $FIREWALL_BACKEND"
+            exit 1
+            ;;
+    esac
+fi
 
 echo "Running base configuration..."
 echo "$CONFIG_CMD"
@@ -92,7 +108,7 @@ SHOW_STATUS="${SHOW_STATUS:-false}"
 
 if [ "$SHOW_STATUS" = "true" ]; then
     echo "==== GEOIP STATUS ===="
-    
+
     if geoip-shell status -v; then
         echo "Status command executed successfully"
     else

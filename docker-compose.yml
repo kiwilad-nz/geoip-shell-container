@@ -12,6 +12,8 @@ services:
     env_file:
       - .env
     volumes:
+      - ./config:/etc/geoip-shell
+      - ./data:/var/lib/geoip-shell
       - ./logs:/logs
     restart: unless-stopped
     logging:

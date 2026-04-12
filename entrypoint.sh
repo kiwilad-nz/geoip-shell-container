@@ -1,18 +1,50 @@
 #!/bin/ash
 set -e
 
+# Allow command passthrough (advanced usage)
+if [ "$#" -gt 0 ]; then
+    echo "Running custom command: $@"
+    exec "$@"
+fi
+
+# Defaults
 MODE="${MODE:-whitelist}"
 COUNTRIES="${COUNTRIES:-NZ}"
 PORT_RULES="${PORT_RULES:-}"
 GEOIP_STATE="${GEOIP_STATE:-on}"
 IP_SOURCE="${IP_SOURCE:-}"
+DIRECTION="${DIRECTION:-inbound}"
+SCHEDULE="${SCHEDULE:-}"
+TZ="${TZ:-UTC}"
+RESET="${RESET:-false}"
+LOG_FILE="${LOG_FILE:-}"
 
 echo "Starting geoip-shell..."
+
+# Timezone setup
+echo "Timezone: $TZ"
+if [ -f "/usr/share/zoneinfo/$TZ" ]; then
+    ln -sf "/usr/share/zoneinfo/$TZ" /etc/localtime
+    echo "$TZ" > /etc/timezone
+else
+    echo "Invalid TZ: $TZ"
+fi
+
+# Logging (optional)
+if [ -n "$LOG_FILE" ]; then
+    echo "Logging to $LOG_FILE"
+    mkdir -p "$(dirname "$LOG_FILE")"
+    exec > >(tee -a "$LOG_FILE") 2>&1
+fi
+
 echo "Mode: $MODE"
 echo "Countries: $COUNTRIES"
+echo "Direction: $DIRECTION"
 echo "Port rules: $PORT_RULES"
 echo "State: $GEOIP_STATE"
 echo "IP source: $IP_SOURCE"
+echo "Schedule: $SCHEDULE"
+echo "Reset: $RESET"
 
 # Ensure installed
 if ! command -v geoip-shell >/dev/null 2>&1; then
@@ -20,42 +52,40 @@ if ! command -v geoip-shell >/dev/null 2>&1; then
     exit 1
 fi
 
-# Reset to avoid duplicate rules (safe fallback)
-echo "Cleaning previous configuration (if any)..."
-geoip-shell uninstall || true
-
-# Build base configure command
-CONFIG_CMD="geoip-shell configure -m \"$MODE\" -c \"$COUNTRIES\""
-
-# Add IP source if provided
-if [ -n "$IP_SOURCE" ]; then
-    CONFIG_CMD="$CONFIG_CMD -u $IP_SOURCE"
+# Optional reset
+if [ "$RESET" = "true" ]; then
+    echo "Resetting previous config..."
+    geoip-shell uninstall || true
 fi
 
-# Run base configuration FIRST
+# Build config
+CONFIG_CMD="geoip-shell configure -D $DIRECTION -m \"$MODE\" -c \"$COUNTRIES\""
+
+[ -n "$IP_SOURCE" ] && CONFIG_CMD="$CONFIG_CMD -u $IP_SOURCE"
+[ -n "$SCHEDULE" ] && CONFIG_CMD="$CONFIG_CMD -s \"$SCHEDULE\""
+
 echo "Running base configuration..."
 echo "$CONFIG_CMD"
 eval $CONFIG_CMD
 
-# Apply port/protocol rules AFTER base config
+# Apply port rules AFTER base config
 if [ -n "$PORT_RULES" ]; then
     echo "Applying port rules..."
     for rule in $PORT_RULES; do
         echo "  -> $rule"
-        geoip-shell configure -p "$rule"
+        geoip-shell configure -D "$DIRECTION" -p "$rule"
     done
 fi
 
-# Enable or disable filtering
+# Enable/disable
 if [ "$GEOIP_STATE" = "on" ] || [ "$GEOIP_STATE" = "off" ]; then
-    echo "Setting geoip state: $GEOIP_STATE"
     geoip-shell "$GEOIP_STATE"
 else
-    echo "Invalid GEOIP_STATE: $GEOIP_STATE (expected 'on' or 'off')"
+    echo "Invalid GEOIP_STATE: $GEOIP_STATE"
     exit 1
 fi
 
-echo "geoip-shell setup complete."
+echo "geoip-shell ready."
 
-# Keep container alive (remove if using one-shot mode)
+# Keep alive
 tail -f /dev/null

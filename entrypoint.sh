@@ -92,7 +92,14 @@ SHOW_STATUS="${SHOW_STATUS:-false}"
 
 if [ "$SHOW_STATUS" = "true" ]; then
     echo "==== GEOIP STATUS ===="
-    geoip-shell status
+    
+    if geoip-shell status -v; then
+        echo "Status command executed successfully"
+    else
+        echo "ERROR: geoip-shell status failed"
+        exit 1
+    fi
+
     echo "======================"
 fi
 

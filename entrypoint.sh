@@ -87,5 +87,14 @@ fi
 
 echo "geoip-shell ready."
 
+# Show Status
+SHOW_STATUS="${SHOW_STATUS:-false}"
+
+if [ "$SHOW_STATUS" = "true" ]; then
+    echo "==== GEOIP STATUS ===="
+    geoip-shell status
+    echo "======================"
+fi
+
 # Keep alive
 tail -f /dev/null

@@ -46,19 +46,21 @@ cp .env.example .env
 docker compose up -d --build
 
 🌍 Environment Variables
-Variable	Description
-MODE	whitelist / blacklist
-COUNTRIES	Country codes (e.g. NZ,AU,US)
-DIRECTION	inbound / outbound
-PORT_RULES	Space-separated port rules
-GEOIP_STATE	on / off
-IP_SOURCE	ripe / ipdeny / maxmind / ipinfo
-FIREWALL_BACKEND	nft / ipt (default: nftables)
-SCHEDULE	Cron schedule for updates
-TZ	Timezone (e.g. Pacific/Auckland)
-RESET	Remove existing geoip rules on startup
-SHOW_STATUS	Show status after startup
-LOG_FILE	Optional log file path
+| Variable         | Description                            |
+| ---------------- | -------------------------------------- |
+| MODE             | whitelist / blacklist                  |
+| COUNTRIES        | Country codes (e.g. NZ,AU,US)          |
+| DIRECTION        | inbound / outbound                     |
+| PORT_RULES       | Space-separated port rules             |
+| GEOIP_STATE      | on / off                               |
+| IP_SOURCE        | ripe / ipdeny / maxmind / ipinfo       |
+| FIREWALL_BACKEND | nft / ipt (default: nftables)          |
+| SCHEDULE         | Cron schedule for updates              |
+| TZ               | Timezone (e.g. Pacific/Auckland)       |
+| RESET            | Remove existing geoip rules on startup |
+| SHOW_STATUS      | Show status after startup              |
+| LOG_FILE         | Optional log file path                 |
+
 🔄 Lifecycle Behaviour
 🟢 Normal startup (default)
 
@@ -98,10 +100,13 @@ docker stop geoip-shell
 geoip-shell uninstall && docker stop geoip-shell
 
 📌 Important Differences
-Action	Effect
-RESET=true	wipes geoIP firewall state, then reapplies config
-geoip-shell uninstall	removes all geoIP firewall integration
-docker stop	does NOT remove firewall rules
+| Action                | Effect                                            |
+| --------------------- | ------------------------------------------------- |
+| RESET=true            | wipes geoIP firewall state, then reapplies config |
+| geoip-shell uninstall | removes all geoIP firewall integration            |
+| docker stop           | does NOT remove firewall rules                    |
+
+
 🖥️ CLI Usage
 
 docker run --rm --network host --privileged geoip-shell geoip-shell status
@@ -134,12 +139,15 @@ direct kernel firewall modification
 ❗ No container-level network isolation
 
 🧠 Key Concepts
-Concept	Meaning
-Container	controller interface
-geoip-shell	firewall engine
-RESET	wipes current firewall state
-uninstall	full removal of geoIP integration
-stop container	does NOT affect firewall
+| Concept        | Meaning                           |
+| -------------- | --------------------------------- |
+| Container      | controller interface              |
+| geoip-shell    | firewall engine                   |
+| RESET          | wipes current firewall state      |
+| uninstall      | full removal of geoIP integration |
+| stop container | does NOT affect firewall          |
+****
+
 🛡️ Recommended Production Settings
 
 RESET=false

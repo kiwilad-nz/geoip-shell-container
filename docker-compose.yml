@@ -1,6 +1,6 @@
 services:
   geoip-shell:
-    build: build: https://github.com/kiwilad-nz/geoip-shell-container.git
+    build: https://github.com/kiwilad-nz/geoip-shell-container.git
     container_name: geoip-shell
     environment:
       TZ: Pacific/Auckland

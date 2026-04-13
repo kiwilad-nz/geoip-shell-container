@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   geoip-shell:
     build: .
@@ -17,7 +15,7 @@ services:
       - ./logs:/logs
     restart: unless-stopped
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
         max-size: "10m"
         max-file: "3"

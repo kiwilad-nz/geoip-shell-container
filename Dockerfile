@@ -1,6 +1,8 @@
-FROM alpine:3.21
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache \
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
     curl \
     iptables \
     ipset \
@@ -12,10 +14,12 @@ RUN apk add --no-cache \
     tzdata \
     ca-certificates \
     grep \
-    grep-cidr \
     gzip \
     unzip \
-    cron
+    cron \
+    busybox \
+    bash \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt
 
@@ -26,7 +30,7 @@ WORKDIR /opt/geoip-shell
 
 RUN chmod +x *.sh
 
-# Install using ash (important)
+# Install geoip-shell (non-interactive)
 RUN ash geoip-shell-install.sh -z
 
 COPY entrypoint.sh /entrypoint.sh

@@ -37,4 +37,3 @@ command geoip-shell status
 # KEEP ALIVE
 # ----------------------------
 tail -f /dev/null
-root@TrueNAS[...S/Dockhand/stacks/KiwiLAD/geoip-shell]#

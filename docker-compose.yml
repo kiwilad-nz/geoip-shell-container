@@ -1,0 +1,14 @@
+services:
+  geoip-shell:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: geoip-shell
+    tty: true  # To keep the container running interactively
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    privileged: true
+    network_mode: host
+    volumes:
+      - ./geoip-shell-config:/etc/geoip-shell

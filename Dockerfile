@@ -31,7 +31,7 @@ WORKDIR /opt/geoip-shell
 RUN chmod +x *.sh
 
 # Install geoip-shell (non-interactive)
-RUN ash geoip-shell-install.sh -z
+RUN bash geoip-shell-install.sh -z
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

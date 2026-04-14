@@ -1,6 +1,6 @@
 FROM alpine:3.21
 
-# Install only what's actually needed
+# Install
 RUN apk add --no-cache \
     bash \
     curl \
@@ -13,7 +13,7 @@ RUN apk add --no-cache \
     dcron \
     libcap
 
-# Fetch latest release safely
+# Fetch latest release of Geoip-shell
 RUN curl -s https://api.github.com/repos/friendly-bits/geoip-shell/releases/latest \
     | jq -r .tarball_url \
     | xargs curl -L -o geoip-shell.tar.gz && \
@@ -22,12 +22,10 @@ RUN curl -s https://api.github.com/repos/friendly-bits/geoip-shell/releases/late
     GEOIP_DIR=$(find . -maxdepth 1 -type d -name "friendly-bits-geoip-shell*") && \
     mv "$GEOIP_DIR" /opt/geoip-shell
 
+# Makes scrripts executable
 WORKDIR /opt/geoip-shell
 RUN chmod +x *.sh
 
-# Only needed if NOT using privileged mode
-RUN setcap cap_net_admin,cap_net_raw+ep /usr/sbin/ipset || true
-
+# Mount Entrypoint
 COPY --chmod=755 entrypoint.sh /entrypoint.sh
-
 ENTRYPOINT ["/entrypoint.sh"]

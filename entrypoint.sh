@@ -12,7 +12,6 @@ geoip-shell() {
 # ----------------------------
 echo Installing geoip-shell
 ./geoip-shell-install.sh -z
-echo "Fetching version..."
 VERSION="$(command geoip-shell -V)"
 echo "Version: $VERSION Installed"
 # ----------------------------

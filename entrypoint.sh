@@ -21,7 +21,6 @@ if grep -qE '^[^#[:space:]]' /etc/geoip-shell/geoip-shell.conf; then
   echo "Saved config found → running geoip-shell configure"
   echo "Selecting option: KEEP (k)"
   printf "k\n" | command geoip-shell configure
-  echo "Setup complete"
 else
   echo "No saved config → skipped running geoip-shell configure"
 fi

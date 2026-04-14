@@ -5,7 +5,6 @@ crond
 # LOG WRAPPER (MUST BE FIRST)
 # ----------------------------
 geoip-shell() {
-  echo "[geoip-shell] $*" >&2
   command geoip-shell "$@" >> /proc/1/fd/1 2>> /proc/1/fd/2
 }
 # ----------------------------
@@ -20,14 +19,12 @@ echo "Version: $VERSION Installed"
 # CONFIGURE
 # ----------------------------
 if grep -qE '^[^#[:space:]]' /etc/geoip-shell/geoip-shell.conf; then
-  echo "Saved config found → running auto-configure"
+  echo "Saved config found → running geoip-shell configure"
   echo "Selecting option: KEEP (k)"
-  printf "k\n" | geoip-shell configure
+  printf "k\n" | command geoip-shell configure
   echo "Setup complete"
 else
-  echo "No saved config → skipping auto-configure"
-  echo "Use 'geoip-shell configure' manually if needed"
-  echo "Setup incomplete"
+  echo "No saved config → skipped running geoip-shell configure"
 fi
 # ----------------------------
 # STATUS

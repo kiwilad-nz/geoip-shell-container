@@ -10,5 +10,5 @@ services:
     network_mode: host
     volumes:
       - ./geoip-shell/config:/etc/geoip-shell
-      - ./geoip-shell/shell:/var/lib/geoip-shell
+      - ./geoip-shell/backup:/var/lib/geoip-shell
     restart: unless-stopped

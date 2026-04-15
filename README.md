@@ -30,3 +30,19 @@ network_mode: host
 ## Setup
 
 To set up the service, copy the Docker Compose configuration and modify it as needed for your environment.
+```yaml
+services:
+  geoip-shell:
+    build: https://github.com/kiwilad-nz/geoip-shell-container.git
+    container_name: geoip-shell
+    environment:
+      TZ: Pacific/Auckland
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    network_mode: host
+    volumes:
+      - ./geoip-shell/config:/etc/geoip-shell
+      - ./geoip-shell/backup:/var/lib/geoip-shell
+    restart: unless-stopped
+```

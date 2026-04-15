@@ -1,8 +1,7 @@
-FROM alpine:3.21
+FROM alpine:3.23
 
 # Install
 RUN apk add --no-cache \
-    bash \
     curl \
     jq \
     nftables \
